@@ -1,0 +1,13 @@
+<div className="glass-box">
+          <label style={{fontWeight:"bold", fontSize:'2.3rem'}}>GargantuaIO</label>
+          <label style={{textAlign:"left"}}>Welcome to a journey beyond spacetime</label>
+          <label style={{textAlign:"right"}}>Dive into the living simulation of black holes - where light bends, gravity dances and folds into the unknown</label>
+          <label>Witness cosmic collisions, spacetime distortion and the raw beauty of physics turned into art</label>
+          <label style={{fontStyle:"italic", fontWeight:"bold"}}>This isn't just an app. It's a window into the impossible</label>
+        </div>
+        <div className="glass-box">
+          <label><b>Gargantua</b> is an interactive simulation platform designed to visualize and explore the physics of black holes</label>
+          <label>From gravitational lensing and accretion disks to black hole mergers and space time curvature - every frame is powered by real physical models and webgl rendering</label>
+          <label>It is built for scientist, students and dreamers who want to experience the universe through light and gravity</label>
+        </div>
+      </div>
