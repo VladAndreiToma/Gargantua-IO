@@ -1,5 +1,5 @@
 :root {
-  background-color: #222;
+  background-color: #000;
   color: whitesmoke;
   justify-content: center;
   align-items: center;
@@ -7,8 +7,9 @@
   flex-direction: column;
   width: 100vw;
   height: auto;
+  min-height: 100vh;
   overflow-x: hidden;
-
+  
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

@@ -2,13 +2,15 @@ import 'katex/dist/katex.min.css';
 import { BlockMath, InlineMath } from 'react-katex';
 import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowRight, FaArrowLeft } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 
 export default function BlackHolesMergers(){
+    const navigate = useNavigate();
     return(
         <div className="page-container">
             <NavigationBar/>
             <div className="theory-scroller">
-                <h1 className="chapter-title">Black Hole Mergers</h1>
+                <h1 className="chapter-title">Chapter 7 - Black Hole Mergers</h1>
                 <p>
                     <h2>Introduction</h2>
                     Black hole mergers are among the most energetic events in the universe, where two black holes orbit each other, gradually spiral inward, and eventually coalesce into a single, more massive black hole.
@@ -115,8 +117,8 @@ export default function BlackHolesMergers(){
                     They are nature’s most spectacular laboratories for testing Einstein’s theory, offering a direct probe into the strong-field, dynamical regime of gravity.
                 </p>
                 <div className='next-prev-chapter-container'>
-                    <button className='prev-button'><FaArrowLeft/></button>
-                    <button className='next-button'><FaArrowRight/></button>
+                    <button className='prev-button' onClick={()=>navigate('/learning/gravitational-lensing', {replace:true})}><FaArrowLeft/></button>
+                    <button className='next-button' onClick={()=>navigate('/learning/time-dilation-and-relativistic-effects', {replace:true})}><FaArrowRight/></button>
                 </div>
             </div>
         </div>

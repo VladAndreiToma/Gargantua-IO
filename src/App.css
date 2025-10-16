@@ -78,9 +78,9 @@
 .page-container{
 display: flex;
 min-height: 100vh;
-height: auto;
 background: radial-gradient(circle at 30% 40%, #1b0033, #002244 70%, #000 100%);
 width:100vw;
+box-sizing: border-box;
 }
 /*lista scrolabila cu casete glassbox al oricarei pagini*/
 .page-scroller{
@@ -106,7 +106,7 @@ width:100vw;
   -webkit-text-fill-color: transparent;
 
 }
-.theory-scroller{
+.theory-scroller, .simulation-scroller{
   flex:1;display:flex;flex-direction:column;
   align-items:center;justify-content:flex-start;
   gap:1.7rem; box-sizing:border-box;
@@ -117,7 +117,7 @@ width:100vw;
   font-size: 0.9rem;
   text-align: center;
 }
-.theory-scroller p{
+.theory-scroller p, .simulation-scroller p{
   background-color: rgba(0, 10, 30, 0.3);
   border-radius: 1rem;
   padding: 2rem 1.6rem;
@@ -163,4 +163,15 @@ width:100vw;
   font-size: 1.4rem;
   font-weight: bold;
   padding: 0.7rem 1rem;
+}
+
+.sim-button{
+  background: rgba(0, 80, 255, 0.15);
+  color: white;
+  min-width: 6.8rem;
+  border-radius: 1rem;
+  border-color: rgba(0, 10, 30, 0.6);
+  border: solid 1px rgba(0, 100, 255, 0.6);
+  border-style: outset;
+  min-height: 2rem;
 }

@@ -2,8 +2,11 @@ import 'katex/dist/katex.min.css';
 import { BlockMath, InlineMath } from 'react-katex';
 import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowRight } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 
 export default function Introduction() {
+    const navigate = useNavigate();
+
   return (
     <div className='page-container'>
         <NavigationBar/>
@@ -41,7 +44,7 @@ export default function Introduction() {
                 where the geometry of spacetime itself becomes dynamic and warped beyond conventional understanding.
             </p>
             <div className='next-prev-chapter-container'>
-                <button className='next-button'><FaArrowRight/></button>
+                <button className='next-button' onClick={()=>navigate('/learning/spacetime-and-general-relativity', {replace:true})}><FaArrowRight/></button>
             </div>
         </div>
     </div>

@@ -2,8 +2,10 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import NavigationBar from "../../navigation/NavigationBar";
 import 'katex/dist/katex.min.css';
 import { BlockMath, InlineMath } from 'react-katex';
+import { useNavigate } from "react-router-dom";
 
 export default function AccretionDisksAndJets(){
+    const navigate = useNavigate();
     return(
         <div className="page-container">
             <NavigationBar/>
@@ -79,8 +81,8 @@ export default function AccretionDisksAndJets(){
                         Jets are highly relativistic, with Lorentz factors <InlineMath math="\Gamma \sim 10 - 100" /> in AGN.
                 </p>
                 <div className="next-prev-chapter-container">
-                    <button className='prev-button'><FaArrowLeft/></button>
-                    <button className='next-button'><FaArrowRight/></button>
+                    <button className='prev-button' onClick={()=>navigate('/learning/kerr-black-holes',{replace:true})}><FaArrowLeft/></button>
+                    <button className='next-button' onClick={()=>navigate('/learning/gravitational-lensing', {replace:true})}><FaArrowRight/></button>
                 </div>
 
             </div>

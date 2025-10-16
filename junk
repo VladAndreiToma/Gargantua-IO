@@ -11,3 +11,28 @@
           <label>It is built for scientist, students and dreamers who want to experience the universe through light and gravity</label>
         </div>
       </div>
+
+
+
+
+
+  <p>
+                    <h2>Heuristic visualization — an imaginative grasp of tensorial structure</h2>
+                    A tensor can be thought of as a structured mapping between geometric directions and physical magnitudes — a mathematical object that encodes how a quantity responds to changes in spatial orientation.
+                    <br/><br/>
+                    In three dimensions, each component <b>T<sub>ijk</sub></b> represents the interaction between three coordinate directions (<i>x, y, z</i>).  
+                    Depending on the combination of indices, we can interpret the physical meaning as follows:
+                    <ul style={{listStylePosition:"inside", textAlign:"left"}}>
+                        <li>
+                        <b>i = j = k</b>: fully aligned components — they describe direct effects along a single axis (e.g. <b>T<sub>xxx</sub>, T<sub>yyy</sub>, T<sub>zzz</sub></b>), representing pure “normal” behavior.
+                        </li>
+                        <li>
+                        <b>i = j ≠ k</b>: plane-related terms — components like <b>T<sub>xxz</sub></b> or <b>T<sub>yyx</sub></b> show how phenomena extend or project within a plane but vary slightly across the third axis.
+                        </li>
+                        <li>
+                        <b>i ≠ j ≠ k</b>: fully mixed components — these reflect coupling between all three axes, where a change in one direction influences behavior along another (e.g. <b>T<sub>xyz</sub></b>).
+                        </li>
+                    </ul>
+                    Together, these components form a complete spatial map of how geometry and physical quantities interact — 
+                    providing both an analytical and intuitive view of multidimensional relationships within a system.
+                </p>

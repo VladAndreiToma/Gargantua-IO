@@ -2,8 +2,11 @@ import "katex/dist/katex.min.css";
 import { InlineMath, BlockMath } from "react-katex";
 import NavigationBar from "../../navigation/NavigationBar";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 export default function SpacetimeAndGeneralRelativity(){
+    const navigate = useNavigate();
+
     return(
         <div className="page-container">
             <NavigationBar/>
@@ -95,8 +98,8 @@ export default function SpacetimeAndGeneralRelativity(){
                     Thus, an observer in free fall experiences no gravity locally — a fundamental idea leading directly to curved spacetime.
                 </p>
                 <div className="next-prev-chapter-container">
-                    <button className="prev-button"><FaArrowLeft/></button>
-                    <button className="next-button"><FaArrowRight/></button>
+                    <button className="prev-button" onClick={()=>navigate('/learning/introduction', {replace:true})}><FaArrowLeft/></button>
+                    <button className="next-button" onClick={()=>navigate('/learning/schwarzschild-geometry', {replace:true})}><FaArrowRight/></button>
                 </div>
             </div>
         </div>

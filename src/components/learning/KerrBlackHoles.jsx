@@ -2,8 +2,10 @@ import 'katex/dist/katex.min.css';
 import { BlockMath, InlineMath } from 'react-katex';
 import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 
 export default function KerrBlackHoles(){
+    const navigate = useNavigate();
     return(
         <div className='page-container'>
             <NavigationBar/>
@@ -76,12 +78,12 @@ export default function KerrBlackHoles(){
                 <p>
                     <h2>Physical Significance</h2>
                     The Kerr solution generalizes General Relativity to include rotation — a key property of most astrophysical black holes.
-It predicts rich physical structures such as ergospheres, frame dragging, and potential energy extraction processes.
-These phenomena make Kerr black holes not only mathematically elegant but also crucial to modeling real black holes in the universe.
+                    It predicts rich physical structures such as ergospheres, frame dragging, and potential energy extraction processes.
+                    These phenomena make Kerr black holes not only mathematically elegant but also crucial to modeling real black holes in the universe.
                 </p>
                 <div className="next-prev-chapter-container">
-                    <button className='prev-button'><FaArrowLeft/></button>
-                    <button className='next-button'><FaArrowRight/></button>
+                    <button className='prev-button' onClick={()=>navigate('/learning/schwarzschild-geometry',{replace:true})}><FaArrowLeft/></button>
+                    <button className='next-button' onClick={()=>navigate('/learning/accretion-disks-and-jets',{replace:true})}><FaArrowRight/></button>
                 </div>
             </div>
         </div>

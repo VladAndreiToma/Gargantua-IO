@@ -2,7 +2,9 @@ import 'katex/dist/katex.min.css';
 import { BlockMath, InlineMath } from 'react-katex';
 import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowRight, FaArrowLeft } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 export default function GravitationalLensing(){
+    const navigate = useNavigate();
     return(
         <div className="page-container">
             <NavigationBar/>
@@ -100,8 +102,8 @@ export default function GravitationalLensing(){
                     It links relativity, optics, and cosmology, and remains one of the most powerful tools in astrophysics for probing invisible mass and the structure of the Universe.
                 </p>
                 <div className='next-prev-chapter-container'>
-                    <button className='prev-button'><FaArrowLeft/></button>
-                    <button className='next-button'><FaArrowRight/></button>
+                    <button className='prev-button' onClick={()=>navigate('/learning/accretion-disks-and-jets', {replace:true})}><FaArrowLeft/></button>
+                    <button className='next-button' onClick={()=>navigate('/learning/black-hole-mergers',{replace:true})}><FaArrowRight/></button>
                 </div>
             </div>
         </div>
