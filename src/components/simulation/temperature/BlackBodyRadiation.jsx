@@ -126,52 +126,33 @@ export default function BlackBodyRadiation() {
   }, [temperature, entropy]);
 
   return (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      gap: "1rem",
-      background: "radial-gradient(circle at center, rgba(0,0,40,0.3), rgba(0,0,10,0.3))",
-      padding: "1rem",
-      borderRadius: "12px"
-    }}>
-      <div
-        ref={mountRef}
-        style={{ width: "100%", height: "500px", borderRadius: "12px", overflow: "hidden" }}
-      />
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", width: "80%" }}>
-        <label style={{ color: "#b0c4ff", fontWeight: "bold" }}>
+    <div className='sim-wrapper'>
+      <div ref={mountRef} className='sim-canvas'/>
+      <div className="slider-wrapper">
+        <label className='slider-label'>
           Temperature (Cold ↔ Hot)
-          <input
+        </label>
+        <input
             type="range"
             min="0"
             max="1"
             step="0.01"
             value={temperature}
             onChange={(e) => setTemperature(parseFloat(e.target.value))}
-            style={{
-              width: "100%",
-              accentColor: "#7f5af0",
-              background: "linear-gradient(to right, #4f4fff, #ff4f7f)"
-            }}
+            className='sim-slider'
           />
-        </label>
-        <label style={{ color: "#b0c4ff", fontWeight: "bold" }}>
+        <label className='slider-label'>
           Entropy (Low ↔ High)
-          <input
+        </label>
+        <input
             type="range"
             min="0"
             max="1"
             step="0.01"
             value={entropy}
             onChange={(e) => setEntropy(parseFloat(e.target.value))}
-            style={{
-              width: "100%",
-              accentColor: "#7f5af0",
-              background: "linear-gradient(to right, #4f4fff, #ff4f7f)"
-            }}
+            className='sim-slider'
           />
-        </label>
       </div>
     </div>
   );

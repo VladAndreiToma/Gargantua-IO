@@ -171,46 +171,31 @@ export default function GenericTensorBuilder() {
   }, [mode]);
 
   return (
-    <div
-      style={{
-        textAlign: "center",
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-      }}
-    >
-      <div
-        ref={mountRef}
-        style={{
-          width: "100%",
-          height: "420px",
-          borderRadius: "12px",
-          overflow: "hidden",
-          background:
-            "radial-gradient(circle at 30% 30%, rgba(6,12,40,0.3), rgba(0,0,10,0.3))",
-        }}
-      />
-      <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "0.5rem" }}>
-        <button className="sim-button" onClick={() => setMode("all")}>
-          All
-        </button>
-        <button className="sim-button" onClick={() => setMode("normal")}>
-          Normal
-        </button>
-        <button className="sim-button" onClick={() => setMode("shear")}>
-          Shear
-        </button>
-        <button className="sim-button" onClick={() => setMode("planex")}>
-          Plane X
-        </button>
-        <button className="sim-button" onClick={() => setMode("planey")}>
-          Plane Y
-        </button>
-        <button className="sim-button" onClick={() => setMode("planez")}>
-          Plane Z
-        </button>
+    <div className="sim-wrapper">
+      <div ref={mountRef} className="sim-canvas"/>
+        <div className="sim-option-row">
+          <button className="sim-button" onClick={() => setMode("all")}>
+            All
+          </button>
+          <button className="sim-button" onClick={() => setMode("normal")}>
+            Normal
+          </button>
+          <button className="sim-button" onClick={() => setMode("shear")}>
+            Shear
+          </button>
+        </div>
+        <div className="sim-option-row">
+          <button className="sim-button" onClick={() => setMode("planex")}>
+            Plane X
+          </button>
+          <button className="sim-button" onClick={() => setMode("planey")}>
+            Plane Y
+          </button>
+          <button className="sim-button" onClick={() => setMode("planez")}>
+            Plane Z
+          </button>
+        </div>
       </div>
-    </div>
   );
 }
 

@@ -20,6 +20,7 @@ import NumericalRelativity from './components/learning/NumericalRelativity';
 import InterstellarAndGargantuaModel from './components/learning/InterstellarAndGargantuaModel';
 import Tensors from './components/simulation/tensors/Tensors';
 import Temperature from './components/simulation/temperature/Temperature';
+import Gravity from './components/simulation/gravity/Gravity';
 
 // Componenta pentru mobil
 function MobileVersionBanner() {
@@ -88,7 +89,7 @@ function App() {
       
         <Route path='/simulation/tensors' element={<Tensors/>}/>
         <Route path='/simulation/temperature-and-entropy' element={<Temperature/>}/>
-
+        <Route path='/simulation/gravity' element={<Gravity/>}/>
       </Routes>
     </Router>
   );

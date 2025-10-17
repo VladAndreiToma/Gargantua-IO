@@ -1,13 +1,13 @@
 import NavigationBar from "../../../navigation/NavigationBar";
-import BlackBodyRadiation from "./BlackBodyRadiation";
+import GravitySimulator from "./GravitySimulator";
 
-export default function Temperature(){
+export default function Gravity(){
     return(
         <div className="page-container">
             <NavigationBar/>
             <div className="simulation-scroller">
-                <div className="chapter-title">Topic 2 - Temperature & Entropy Visualization</div>
-                <BlackBodyRadiation/>
+                <h1 className="chapter-title">Topic 3 - Gravity & Gravitational Force Field</h1>
+                <GravitySimulator/>
             </div>
         </div>
     )
