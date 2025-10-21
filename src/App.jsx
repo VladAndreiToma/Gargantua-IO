@@ -21,6 +21,15 @@ import InterstellarAndGargantuaModel from './components/learning/InterstellarAnd
 import Tensors from './components/simulation/tensors/Tensors';
 import Temperature from './components/simulation/temperature/Temperature';
 import Gravity from './components/simulation/gravity/Gravity';
+import Quiz1 from './components/quizes/Quiz1';
+import Quiz2 from './components/quizes/Quiz2';
+import Quiz3 from './components/quizes/Quiz3';
+import Quiz4 from './components/quizes/Quiz4';
+import Quiz5 from './components/quizes/Quiz5';
+import Quiz6 from './components/quizes/Quiz6';
+import Quiz7 from './components/quizes/Quiz7';
+import Quiz8 from './components/quizes/Quiz8';
+import Quiz9 from './components/quizes/Quiz9';
 
 // Componenta pentru mobil
 function MobileVersionBanner() {
@@ -90,6 +99,17 @@ function App() {
         <Route path='/simulation/tensors' element={<Tensors/>}/>
         <Route path='/simulation/temperature-and-entropy' element={<Temperature/>}/>
         <Route path='/simulation/gravity' element={<Gravity/>}/>
+
+        <Route path='/quiz/quiz-1' element={<Quiz1/>}/>
+        <Route path='/quiz/quiz-2' element={<Quiz2/>}/>
+        <Route path='/quiz/quiz-3' element={<Quiz3/>}/>
+        <Route path='/quiz/quiz-4' element={<Quiz4/>}/>
+        <Route path='/quiz/quiz-5' element={<Quiz5/>}/>
+        <Route path='/quiz/quiz-6' element={<Quiz6/>}/>
+        <Route path='/quiz/quiz-7' element={<Quiz7/>}/>
+        <Route path='/quiz/quiz-8' element={<Quiz8/>}/>
+        <Route path='/quiz/quiz-9' element={<Quiz9/>}/>
+
       </Routes>
     </Router>
   );

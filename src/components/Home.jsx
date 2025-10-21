@@ -1,10 +1,12 @@
 import NavigationBar from "../navigation/NavigationBar";
+import Mascot from "./mascot/Mascot";
 
 export default function Home() {
   return (
     <div style={{display:"flex",minHeight:"100vh", height:"auto",background:"radial-gradient(circle at 30% 40%, #1b0033, #002244 70%, #000 100%)", width:'100vw'}}>
       <NavigationBar/>
-      <div style={{flex:1,display:"flex", flexDirection:'column',alignItems:"center",justifyContent:"flex-start", gap:'5vh', boxSizing:"border-box", paddingTop:'7rem', paddingBottom:'5rem', height:"auto"}}>
+      <div style={{flex:1,display:"flex", width:'100%', flexDirection:'column',alignItems:"center",justifyContent:"flex-start", gap:'5vh', boxSizing:"border-box", paddingTop:'7rem', paddingBottom:'5rem', height:"auto"}}>
+        <Mascot/>
         <div className="glass-box">
           <label style={{fontSize:'1.8rem'}}><b>GargantuaIO</b></label>
           <label style={{fontSize:'1.4rem', fontStyle:"italic"}}>Where Physics Meets Visualization</label>
