@@ -26,7 +26,7 @@ export default function Learning() {
 
   return (
     <div className="page-container">
-      <NavigationBar />
+      <NavigationBar/>
       <div className="page-scroller">
         {topics.map((topic, idx) => {
           const slug = toSlug(topic);

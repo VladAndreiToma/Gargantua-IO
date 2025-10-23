@@ -3,6 +3,7 @@ import { BlockMath, InlineMath } from 'react-katex';
 import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowRight, FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import CheckerCourseCompleted from './Checker_CourseCompleted';
 
 export default function BlackHolesMergers(){
     const navigate = useNavigate();
@@ -116,6 +117,7 @@ export default function BlackHolesMergers(){
                     Black hole mergers unite all aspects of relativistic astrophysics — from orbital dynamics and Kerr geometry to gravitational radiation and spacetime oscillations.
                     They are nature’s most spectacular laboratories for testing Einstein’s theory, offering a direct probe into the strong-field, dynamical regime of gravity.
                 </p>
+                <CheckerCourseCompleted/>
                 <div className='next-prev-chapter-container'>
                     <button className='prev-button' onClick={()=>navigate('/learning/gravitational-lensing', {replace:true})}><FaArrowLeft/></button>
                     <button className='next-button' onClick={()=>navigate('/learning/time-dilation-and-relativistic-effects', {replace:true})}><FaArrowRight/></button>

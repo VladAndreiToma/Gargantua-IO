@@ -3,6 +3,7 @@ import { BlockMath, InlineMath } from 'react-katex';
 import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import CheckerCourseCompleted from './Checker_CourseCompleted';
 
 export default function KerrBlackHoles(){
     const navigate = useNavigate();
@@ -81,6 +82,9 @@ export default function KerrBlackHoles(){
                     It predicts rich physical structures such as ergospheres, frame dragging, and potential energy extraction processes.
                     These phenomena make Kerr black holes not only mathematically elegant but also crucial to modeling real black holes in the universe.
                 </p>
+
+                <CheckerCourseCompleted/>
+
                 <div className="next-prev-chapter-container">
                     <button className='prev-button' onClick={()=>navigate('/learning/schwarzschild-geometry',{replace:true})}><FaArrowLeft/></button>
                     <button className='next-button' onClick={()=>navigate('/learning/accretion-disks-and-jets',{replace:true})}><FaArrowRight/></button>

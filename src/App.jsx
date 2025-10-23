@@ -30,6 +30,11 @@ import Quiz6 from './components/quizes/Quiz6';
 import Quiz7 from './components/quizes/Quiz7';
 import Quiz8 from './components/quizes/Quiz8';
 import Quiz9 from './components/quizes/Quiz9';
+import YourAchievements from './components/about/YourAchievements';
+import DevelopmentProgress from './components/about/DevelopmentProgress';
+import AppVersion from './components/about/AppVersion';
+import ScienceNews from './components/about/ScienceNews';
+import SpaceTime from './components/simulation/spacetime/SpaceTime';
 
 // Componenta pentru mobil
 function MobileVersionBanner() {
@@ -99,6 +104,7 @@ function App() {
         <Route path='/simulation/tensors' element={<Tensors/>}/>
         <Route path='/simulation/temperature-and-entropy' element={<Temperature/>}/>
         <Route path='/simulation/gravity' element={<Gravity/>}/>
+        <Route path='/simulation/spacetime' element={<SpaceTime/>}/>
 
         <Route path='/quiz/quiz-1' element={<Quiz1/>}/>
         <Route path='/quiz/quiz-2' element={<Quiz2/>}/>
@@ -109,6 +115,11 @@ function App() {
         <Route path='/quiz/quiz-7' element={<Quiz7/>}/>
         <Route path='/quiz/quiz-8' element={<Quiz8/>}/>
         <Route path='/quiz/quiz-9' element={<Quiz9/>}/>
+
+        <Route path='/about/your-achievements' element={<YourAchievements/>}/>
+        <Route path='/about/development-progress' element={<DevelopmentProgress/>}/>
+        <Route path='/about/app-version' element={<AppVersion/>}/>
+        <Route path='/about/science-news' element={<ScienceNews/>}/>
 
       </Routes>
     </Router>

@@ -4,6 +4,7 @@ import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowRight, FaArrowLeft } from 'react-icons/fa6';
 import { replace, useNavigate } from 'react-router-dom';
 import { useAnimations } from '@react-three/drei';
+import CheckerCourseCompleted from './Checker_CourseCompleted';
 
 export default function TimeDilationAndRelativisticEffects(){
     const navigate = useNavigate();
@@ -120,6 +121,9 @@ export default function TimeDilationAndRelativisticEffects(){
                     Both motion and gravity distort how clocks tick and how observers perceive reality.
                     From orbiting satellites to falling into a black hole, time itself becomes relative — a dynamic entity shaped by energy, motion, and curvature.
                 </p>
+
+                <CheckerCourseCompleted/>
+
                 <div className='next-prev-chapter-container'>
                     <button className='prev-button' onClick={()=>navigate('/learning/black-hole-mergers',{replace:true})}><FaArrowLeft/></button>
                     <button className='next-button' onClick={()=>navigate('/learning/information-paradox-and-hawking-radiation', {replace:true})}><FaArrowRight/></button>

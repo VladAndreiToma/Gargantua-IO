@@ -3,6 +3,7 @@ import { BlockMath, InlineMath } from 'react-katex';
 import NavigationBar from '../../navigation/NavigationBar';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
+import CheckerCourseCompleted from './Checker_CourseCompleted';
 
 export default function NumericalRelativity(){
     const navigate = useNavigate();
@@ -165,6 +166,9 @@ export default function NumericalRelativity(){
                     From black hole mergers to gravitational waves, it connects abstract geometry to observable astrophysics.  
                     In your simulation, you can visualize how spacetime curvature evolves, how horizons move, and how gravitational waves propagate through the computational grid — the digital echo of relativity itself.
                 </p>
+
+                <CheckerCourseCompleted/>
+
                 <div className='next-prev-chapter-container'>
                     <button className='prev-button' onClick={()=>navigate('/learning/information-paradox-and-hawking-radiation',{replace:true})}><FaArrowLeft/></button>
                     <button className='next-button' onClick={()=>navigate('/learning/interstellar-and-gargantua-model',{replace:true})}><FaArrowRight/></button>

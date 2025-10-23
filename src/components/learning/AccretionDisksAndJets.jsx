@@ -3,6 +3,7 @@ import NavigationBar from "../../navigation/NavigationBar";
 import 'katex/dist/katex.min.css';
 import { BlockMath, InlineMath } from 'react-katex';
 import { useNavigate } from "react-router-dom";
+import CheckerCourseCompleted from "./Checker_CourseCompleted";
 
 export default function AccretionDisksAndJets(){
     const navigate = useNavigate();
@@ -80,6 +81,7 @@ export default function AccretionDisksAndJets(){
                         Blandford–Payne mechanism: magnetocentrifugal acceleration of disk plasma
                         Jets are highly relativistic, with Lorentz factors <InlineMath math="\Gamma \sim 10 - 100" /> in AGN.
                 </p>
+                <CheckerCourseCompleted/>
                 <div className="next-prev-chapter-container">
                     <button className='prev-button' onClick={()=>navigate('/learning/kerr-black-holes',{replace:true})}><FaArrowLeft/></button>
                     <button className='next-button' onClick={()=>navigate('/learning/gravitational-lensing', {replace:true})}><FaArrowRight/></button>

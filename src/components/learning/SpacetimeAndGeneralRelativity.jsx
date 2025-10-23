@@ -3,6 +3,7 @@ import { InlineMath, BlockMath } from "react-katex";
 import NavigationBar from "../../navigation/NavigationBar";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import CheckerCourseCompleted from "./Checker_CourseCompleted";
 
 export default function SpacetimeAndGeneralRelativity(){
     const navigate = useNavigate();
@@ -97,6 +98,9 @@ export default function SpacetimeAndGeneralRelativity(){
                     “There is no local experiment that can distinguish between uniform acceleration and a gravitational field.”
                     Thus, an observer in free fall experiences no gravity locally — a fundamental idea leading directly to curved spacetime.
                 </p>
+
+                <CheckerCourseCompleted/>
+
                 <div className="next-prev-chapter-container">
                     <button className="prev-button" onClick={()=>navigate('/learning/introduction', {replace:true})}><FaArrowLeft/></button>
                     <button className="next-button" onClick={()=>navigate('/learning/schwarzschild-geometry', {replace:true})}><FaArrowRight/></button>

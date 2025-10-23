@@ -3,6 +3,7 @@ import { BlockMath, InlineMath } from 'react-katex';
 import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowRight } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import CheckerCourseCompleted from './Checker_CourseCompleted';
 
 export default function Introduction() {
     const navigate = useNavigate();
@@ -43,6 +44,9 @@ export default function Introduction() {
                 In essence, black holes are not just cosmic voids—they are the most extreme manifestations of gravity,
                 where the geometry of spacetime itself becomes dynamic and warped beyond conventional understanding.
             </p>
+
+            <CheckerCourseCompleted/>
+
             <div className='next-prev-chapter-container'>
                 <button className='next-button' onClick={()=>navigate('/learning/spacetime-and-general-relativity', {replace:true})}><FaArrowRight/></button>
             </div>

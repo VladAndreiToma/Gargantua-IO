@@ -112,7 +112,7 @@ box-sizing: border-box;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.theory-scroller, .simulation-scroller, .quiz-scroller{
+.theory-scroller, .simulation-scroller, .quiz-scroller, .about-scroller{
   flex:1;display:flex;flex-direction:column;
   align-items:center;justify-content:flex-start;
   gap:1.7rem; box-sizing:border-box;
@@ -122,7 +122,7 @@ box-sizing: border-box;
   font-size: 0.9rem;
   text-align: center;
 }
-.theory-scroller p, .simulation-scroller p, .quiz-scroller p{
+.theory-scroller p, .simulation-scroller p, .quiz-scroller p, .about-scroller p{
   background-color: rgba(0, 10, 30, 0.3);
   border-radius: 1rem;
   padding: 2rem 1.6rem;
@@ -164,7 +164,7 @@ box-sizing: border-box;
 
 
 
-.next-button, .prev-button, .evaluate-button {
+.next-button, .prev-button, .evaluate-button, .mark-completed-button {
   border-radius: 1rem;
   background: linear-gradient(110deg, #00e1ff, #0066ff, #002244);
   color: white;
@@ -177,12 +177,12 @@ box-sizing: border-box;
 }
 
 /* hover effect */
-.next-button:hover, .prev-button:hover, .evaluate-button:hover {
+.next-button:hover, .prev-button:hover, .evaluate-button:hover, .mark-completed-button:hover {
   filter: brightness(1.1);
 }
 
 /* active / click effect */
-.next-button:active, .prev-button:active, .evaluate-button:active {
+.next-button:active, .prev-button:active, .evaluate-button:active , .mark-completed-button:active{
   transform: scale(0.95);
   box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
@@ -326,4 +326,33 @@ box-sizing: border-box;
   border-radius: 50%;
   background: white;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+
+.about-submenu-cell{
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  height: auto;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3rem;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 1rem 2rem;
+}
+
+
+.gallery-row{
+  flex:1;display:flex; flex-direction:row; align-items:center; justify-content:center; gap:1rem; box-sizing:border-box; 
+  padding-top:7rem; padding-bottom: 5rem; padding-left: 1rem; padding-right: 1rem; height:auto;
+}
+.gallery-child-vertical-scroller{
+  display: flex; justify-content: flex-start; align-items: center; width: 100%;
+  flex-direction: column; padding: 0 0; margin: 0 0; gap: 1rem; height: auto;
+}
+.picture-style{
+  object-fit: contain;
+  width: 100%;
+  border-radius: 0.8rem;
 }

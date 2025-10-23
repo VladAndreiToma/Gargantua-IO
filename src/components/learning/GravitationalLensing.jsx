@@ -3,6 +3,7 @@ import { BlockMath, InlineMath } from 'react-katex';
 import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowRight, FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import CheckerCourseCompleted from './Checker_CourseCompleted';
 export default function GravitationalLensing(){
     const navigate = useNavigate();
     return(
@@ -101,6 +102,7 @@ export default function GravitationalLensing(){
                     Gravitational lensing elegantly demonstrates the curvature of spacetime.
                     It links relativity, optics, and cosmology, and remains one of the most powerful tools in astrophysics for probing invisible mass and the structure of the Universe.
                 </p>
+                <CheckerCourseCompleted/>
                 <div className='next-prev-chapter-container'>
                     <button className='prev-button' onClick={()=>navigate('/learning/accretion-disks-and-jets', {replace:true})}><FaArrowLeft/></button>
                     <button className='next-button' onClick={()=>navigate('/learning/black-hole-mergers',{replace:true})}><FaArrowRight/></button>

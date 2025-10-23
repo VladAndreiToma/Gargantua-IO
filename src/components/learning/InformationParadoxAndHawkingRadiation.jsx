@@ -3,6 +3,7 @@ import { BlockMath, InlineMath } from 'react-katex';
 import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowRight, FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import CheckerCourseCompleted from './Checker_CourseCompleted';
 
 export default function InformationParadoxAndHawkingRadiation(){
     const navigate = useNavigate();
@@ -188,6 +189,9 @@ export default function InformationParadoxAndHawkingRadiation(){
                         The information paradox remains one of the deepest questions in theoretical physics: how quantum mechanics and general relativity reconcile at the horizon scale.
                         Modern developments — holography, islands, and quantum information — suggest that black hole evaporation is indeed unitary, but the mechanism involves subtle nonlocal effects and new geometric contributions beyond the classical horizon.
                     </p>
+
+                <CheckerCourseCompleted/>
+                
                 <div className='next-prev-chapter-container'>
                     <button className='prev-button' onClick={()=>navigate('/learning/time-dilation-and-relativistic-effects',{replace:true})}><FaArrowLeft/></button>
                     <button className='next-button' onClick={()=>navigate('/learning/numerical-relativity',{replace:true})}><FaArrowRight/></button>

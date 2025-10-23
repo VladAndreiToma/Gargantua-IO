@@ -4,6 +4,7 @@ import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
 import { useAnimations } from '@react-three/drei';
 import { useNavigate } from 'react-router-dom';
+import CheckerCourseCompleted from './Checker_CourseCompleted';
 
 export default function SchwarzshildGeometry(){
     const navigate = useNavigate();
@@ -121,6 +122,9 @@ export default function SchwarzshildGeometry(){
                     and a horizon forms beyond which escape is impossible.
                     It forms the foundation for understanding more complex black holes such as the Kerr (rotating) and Reissner–Nordström (charged) solutions.
                 </p>
+
+                <CheckerCourseCompleted/>
+
                 <div className="next-prev-chapter-container">
                     <button className='prev-button' onClick={()=>navigate('/learning/spacetime-and-general-relativity',{replace:true})}><FaArrowLeft/></button>
                     <button className='next-button' onClick={()=>navigate('/learning/kerr-black-holes', {replace:true})}><FaArrowRight/></button>

@@ -3,6 +3,7 @@ import { BlockMath, InlineMath } from 'react-katex';
 import NavigationBar from '../../navigation/NavigationBar';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import CheckerCourseCompleted from './Checker_CourseCompleted';
 
 export default function InterstellarAndGargantuaModel(){
     const navigate = useNavigate();
@@ -134,6 +135,9 @@ export default function InterstellarAndGargantuaModel(){
                         <BlockMath math="g = \frac{(p_\mu u^\mu)_{\text{obs}}}{(p_\mu u^\mu)_{\text{em}}}, \quad I_{\nu,\text{obs}} = g^3 I_{\nu,\text{em}}" />
                     </div>
                 </p>
+                
+                <CheckerCourseCompleted/>
+
                 <div className='next-prev-chapter-container'>
                     <button className='prev-button' onClick={()=>navigate('/learning/numerical-relativity',{replace:true})}><FaArrowLeft/></button>
                 </div>

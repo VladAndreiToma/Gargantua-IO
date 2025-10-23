@@ -1,353 +1,359 @@
-// BlackHoleMascotWithChat.jsx
+// Mascot.jsx
 import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 /**
- * Mascot + chat: orb vizual + overlay chat funcțional (send, mock reply, autoscroll)
+ * Mascot: "alive particle slime" + overlay chat.
+ * - double-click / double-tap opens chat
+ * - pointer moves distort surface
+ * - container is centered and renderer size synced to CSS
  */
 export default function Mascot({ height = 450 }) {
   const mountRef = useRef(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([
-    { from: "gargantua", text: "Hi! Lets discover things✨" },
-  ]);
-
-  // păstrăm id-urile timeout-urilor pentru cleanup
+  const [messages, setMessages] = useState([{ from: "gargantua", text: "Hi! Let's discover things ✨" }]);
   const replyTimeouts = useRef([]);
+
+  // chat autoscroll
+  const messagesEndRef = useRef(null);
+  useEffect(() => {
+    if (messagesEndRef.current) messagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages, chatOpen]);
 
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
 
-    // dimensiuni
-    const W = mount.clientWidth || 600;
-    const H = mount.clientHeight || height;
+    // --- ensure mount centers the canvas so it won't stick to a corner ---
+    mount.style.display = "flex";
+    mount.style.alignItems = "center";
+    mount.style.justifyContent = "center";
+    mount.style.boxSizing = "border-box";
+    mount.innerHTML = "";
 
-    // scena / camera / renderer
+    // quick webgl support check
+    try {
+      const c = document.createElement("canvas");
+      const ctx = c.getContext("webgl") || c.getContext("experimental-webgl");
+      if (!ctx) throw new Error("WebGL not supported");
+    } catch (err) {
+      mount.innerText = "WebGL unavailable";
+      return;
+    }
+
+    // sizes (mount should have explicit size from parent; Home wrapper should pass sensible width)
+    const W = mount.clientWidth || 600;
+    const H = typeof height === "number" ? height : mount.clientHeight || 450;
+
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 100);
-    camera.position.set(0, 0.6, 4);
+    camera.position.set(0, 0.5, 3.6);
+    camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(W, H);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // IMPORTANT: third param true will update canvas style width/height too
+    renderer.setSize(W, H, true);
     renderer.setClearColor(0x000000, 0);
+    renderer.domElement.style.display = "block";
+    renderer.domElement.style.width = "100%";
+    renderer.domElement.style.height = "100%";
     mount.appendChild(renderer.domElement);
 
-    // controls
+    // controls (kept but limited)
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false;
     controls.enableZoom = false;
     controls.enableDamping = true;
     controls.autoRotate = false;
+    controls.target.set(0, 0, 0);
+    controls.update();
 
-    // lumini
-    const hemi = new THREE.HemisphereLight(0xcfe6ff, 0x404060, 0.6);
-    const key = new THREE.DirectionalLight(0xffffff, 0.6);
-    key.position.set(4, 6, 4);
-    const subtleBlue = new THREE.PointLight(0x6b49ff, 0.5, 10);
-    subtleBlue.position.set(-2, 1.5, 3.5);
-    scene.add(hemi, key, subtleBlue);
+    // lights (soft)
+    scene.add(new THREE.HemisphereLight(0xcfe6ff, 0x10111a, 0.45));
+    const key = new THREE.DirectionalLight(0xffffff, 0.5);
+    key.position.set(3, 5, 3);
+    scene.add(key);
 
-    // core
-    const coreGeo = new THREE.SphereGeometry(0.9, 32, 32);
-    const coreMat = new THREE.MeshStandardMaterial({
-      color: 0x000000,
-      roughness: 0.7,
-      metalness: 0.05,
-      transparent: true,
-      opacity: 0.98,
-    });
-    const core = new THREE.Mesh(coreGeo, coreMat);
-    scene.add(core);
-
-    // rim, glow
-    const rimGeo = new THREE.SphereGeometry(1.06, 32, 32);
-    const rimMat = new THREE.MeshBasicMaterial({
-      color: 0x5b3bff,
-      transparent: true,
-      opacity: 0.12,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
-    const rim = new THREE.Mesh(rimGeo, rimMat);
-    scene.add(rim);
-
-    const glowGeom = new THREE.SphereGeometry(1.5, 32, 32);
-    const glowMat = new THREE.MeshBasicMaterial({
-      color: 0x6b49ff,
-      transparent: true,
-      opacity: 0.12,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
-    const glowMesh = new THREE.Mesh(glowGeom, glowMat);
-    scene.add(glowMesh);
-
-    // shell particles
-    const PARTICLE_COUNT = 900;
+    // --- PARTICLES (slime) ---
+    const PARTICLE_COUNT = 1400;
     const positions = new Float32Array(PARTICLE_COUNT * 3);
     const seeds = new Float32Array(PARTICLE_COUNT);
-    const radii = new Float32Array(PARTICLE_COUNT);
+    const scales = new Float32Array(PARTICLE_COUNT);
 
+    // distribute points inside a sphere shell-ish
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const u = Math.random();
-      const theta = Math.acos(2 * u - 1);
-      const phi = Math.random() * Math.PI * 2;
-      const baseR = 1.25 + Math.random() * 0.7;
-      const x = baseR * Math.sin(theta) * Math.cos(phi);
-      const y = baseR * Math.sin(theta) * Math.sin(phi);
-      const z = baseR * Math.cos(theta);
-      positions[i * 3] = x;
-      positions[i * 3 + 1] = y;
-      positions[i * 3 + 2] = z;
+      let x, y, z;
+      // sample inside unit sphere for organic look, then push toward shell with random radius
+      do {
+        x = Math.random() * 2 - 1;
+        y = Math.random() * 2 - 1;
+        z = Math.random() * 2 - 1;
+      } while (x * x + y * y + z * z > 1);
+      const baseR = 0.9 + Math.random() * 0.7;
+      positions[i * 3] = x * baseR;
+      positions[i * 3 + 1] = y * baseR;
+      positions[i * 3 + 2] = z * baseR;
       seeds[i] = Math.random() * 10.0;
-      radii[i] = 0.7 + Math.random() * 1.3;
+      scales[i] = 0.8 + Math.random() * 2.4;
     }
 
-    const shellGeo = new THREE.BufferGeometry();
-    shellGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    shellGeo.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
-    shellGeo.setAttribute("aRad", new THREE.BufferAttribute(radii, 1));
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
+    geo.setAttribute("aScale", new THREE.BufferAttribute(scales, 1));
 
-    const shellMat = new THREE.ShaderMaterial({
+    // uniforms
+    const uniforms = {
+      uTime: { value: 0.0 },
+      uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 2) },
+      uPointer: { value: new THREE.Vector2(10, 10) }, // offscreen default
+      uClick: { value: new THREE.Vector3(10, 10, -9999) }, // x,y,startTime
+      uColorA: { value: new THREE.Color(0x2ea6ff) }, // blue
+      uColorB: { value: new THREE.Color(0x7a64ff) }, // violet
+      uColorC: { value: new THREE.Color(0xffffff) }, // highlight
+      uGlobalBrightness: { value: 1.1 },
+    };
+
+    // vertex + fragment shaders — **do not redeclare** 'position' attribute; use built-in variable.
+    const material = new THREE.ShaderMaterial({
       transparent: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
-      uniforms: {
-        uTime: { value: 0 },
-        uScale: { value: 1.0 },
-        uColorA: { value: new THREE.Color(0x4a3bff) },
-        uColorB: { value: new THREE.Color(0x8fb8ff) },
-        uOpacity: { value: 0.95 },
-        uPixelRatio: { value: new THREE.Vector2(Math.min(window.devicePixelRatio, 2), 0) },
-      },
+      uniforms,
       vertexShader: `
+        precision highp float;
         attribute float aSeed;
-        attribute float aRad;
+        attribute float aScale;
         uniform float uTime;
-        uniform float uScale;
-        uniform vec2 uPixelRatio;
+        uniform vec2 uPointer;
+        uniform vec3 uClick;
+        uniform float uPixelRatio;
         varying float vSeed;
-        varying float vRad;
-        varying vec3 vPos;
-        void main(){
+        varying float vScale;
+        varying float vClickInfluence;
+
+        // simple layered sin noise for organic surface
+        float layeredNoise(vec3 p) {
+          float n = 0.0;
+          n += 0.20 * sin(p.x * 3.1 + uTime * 1.4 + aSeed * 1.1);
+          n += 0.12 * sin(p.y * 4.2 + uTime * 0.9 + aSeed * 2.3);
+          n += 0.08 * sin(p.z * 5.3 + uTime * 1.9 + aSeed * 0.7);
+          return n;
+        }
+
+        void main() {
           vSeed = aSeed;
-          vRad = aRad;
-          vPos = position;
-          vec3 dir = normalize(position);
-          float b = 0.10 * sin(uTime * 1.6 + aSeed * 2.3) + 0.04 * cos(uTime * 2.2 + aSeed * 1.9);
-          float swirl = 0.09 * sin(uTime * 0.7 + length(position.xy) * 4.2 + aSeed * 1.1);
-          vec3 newPos = position + dir * (b + swirl) * uScale;
-          vec4 mvPosition = modelViewMatrix * vec4(newPos, 1.0);
-          gl_Position = projectionMatrix * mvPosition;
-          gl_PointSize = (2.0 + aRad * 1.4) * uPixelRatio.x;
-          gl_PointSize *= clamp(1.0 / (-mvPosition.z * 0.18), 0.5, 3.0);
+          vScale = aScale;
+
+          // base noise-displacement (slime breathing)
+          vec3 pos = position;
+          float n = layeredNoise(pos) * 0.12;
+
+          // pointer influence (projected onto XY plane)
+          vec2 p = uPointer;
+          float pd = 999.0;
+          if (p.x < 9.0) {
+            pd = distance(vec2(pos.x, pos.y), p);
+          }
+          float pointerBump = 0.0;
+          if (pd < 1.2) {
+            pointerBump = 0.35 * exp(-pd * 5.5) * (1.0 + 0.8 * sin(uTime * 6.0 + aSeed));
+          }
+
+          // click pulse influence
+          float clickStart = uClick.z;
+          float clickAge = uTime - clickStart;
+          float clickInf = 0.0;
+          if (clickStart > -100.0 && clickAge >= 0.0) {
+            vec2 cp = uClick.xy;
+            float cd = distance(vec2(pos.x, pos.y), cp);
+            float r = 0.25 + clickAge * 0.9;
+            clickInf = 1.2 * exp(- (cd - r)*(cd - r) * 12.0) * max(0.0, 1.0 - clickAge * 0.6);
+          }
+
+          float total = n + pointerBump + clickInf;
+
+          // displace outward along normalized direction for "slime puff"
+          vec3 dir = normalize(pos);
+          vec3 newPos = pos + dir * total * (0.9 + aScale * 0.12);
+
+          // compute gl_PointSize using distance and scale
+          vec4 mvPos = modelViewMatrix * vec4(newPos, 1.0);
+          float dist = -mvPos.z;
+          float size = (4.0 + aScale * 4.0) * uPixelRatio / (dist * 0.85);
+          gl_PointSize = clamp(size, 2.0, 48.0);
+
+          vClickInfluence = clamp(pointerBump + clickInf, 0.0, 1.0);
+
+          gl_Position = projectionMatrix * mvPos;
         }
       `,
       fragmentShader: `
-        uniform float uTime;
+        precision highp float;
         uniform vec3 uColorA;
         uniform vec3 uColorB;
-        uniform float uOpacity;
-        varying float vSeed;
-        varying float vRad;
-        varying vec3 vPos;
-        void main(){
-          vec2 c = gl_PointCoord - 0.5;
-          float dist = length(c);
-          float alpha = smoothstep(0.6, 0.0, dist);
-          float m = 0.5 + 0.5 * sin(uTime * 1.4 + vSeed);
-          vec3 col = mix(uColorA, uColorB, m) * (0.7 + 0.6 * (1.0 - dist));
-          gl_FragColor = vec4(col, alpha * uOpacity * 0.95);
-          if (gl_FragColor.a < 0.01) discard;
-        }
-      `,
-    });
-
-    const shellPoints = new THREE.Points(shellGeo, shellMat);
-    scene.add(shellPoints);
-
-    // veil
-    const veilGeo = new THREE.SphereGeometry(1.18, 64, 64);
-    const vertCount = veilGeo.attributes.position.count;
-    const vSeeds = new Float32Array(vertCount);
-    for (let i = 0; i < vertCount; i++) vSeeds[i] = Math.random() * 6.0;
-    veilGeo.setAttribute("vSeed", new THREE.BufferAttribute(vSeeds, 1));
-
-    const veilMat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: { value: 0 },
-        uOpacity: { value: 0.22 },
-        uColor: { value: new THREE.Color(0x2a2f6f) },
-      },
-      transparent: true,
-      depthWrite: false,
-      side: THREE.DoubleSide,
-      vertexShader: `
-        attribute float vSeed;
+        uniform vec3 uColorC;
         uniform float uTime;
-        varying float vSeedV;
-        void main(){
-          vSeedV = vSeed;
-          vec3 n = normal;
-          float d = 0.08 * sin(uTime * 1.9 + vSeed * 2.1 + position.y * 4.2);
-          vec3 pos = position + n * d;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float uOpacity;
-        uniform vec3 uColor;
-        varying float vSeedV;
-        void main(){
-          float band = 0.5 + 0.5 * sin(vSeedV * 4.0);
-          vec3 col = mix(uColor, vec3(0.5,0.45,0.95), 0.25) * (0.7 + 0.3 * band);
-          gl_FragColor = vec4(col, uOpacity);
+        uniform float uGlobalBrightness;
+        varying float vSeed;
+        varying float vScale;
+        varying float vClickInfluence;
+
+        void main() {
+          vec2 uv = gl_PointCoord - 0.5;
+          float d = length(uv);
+
+          float core = smoothstep(0.3, 0.0, d);   // core brightness
+          float rim = smoothstep(0.75, 0.28, d);  // outer soft rim
+
+          float h = 0.45 + 0.5 * sin(uTime * 0.6 + vSeed * 1.9);
+          vec3 base = mix(uColorA, uColorB, h);
+
+          // push towards white if pointer/click influenced
+          vec3 col = mix(base, uColorC, vClickInfluence * 0.9);
+
+          float brightness = 0.5 + 1.6 * core + 0.5 * (1.0 - d) * (vScale * 0.28);
+          brightness *= uGlobalBrightness;
+
+          float alpha = clamp(core + (1.0 - d) * 0.6 * rim, 0.0, 1.0);
+          vec3 finalCol = col * brightness;
+
+          gl_FragColor = vec4(finalCol, alpha);
+          if (gl_FragColor.a < 0.02) discard;
         }
       `,
     });
 
-    const veil = new THREE.Mesh(veilGeo, veilMat);
-    scene.add(veil);
+    const points = new THREE.Points(geo, material);
+    scene.add(points);
 
-    // interaction
+    // add soft inner core mesh to give volume (non-shader, simple)
+    const innerGeo = new THREE.SphereGeometry(0.6, 24, 24);
+    const innerMat = new THREE.MeshStandardMaterial({ color: 0x07070b, roughness: 0.7, metalness: 0.1 });
+    const inner = new THREE.Mesh(innerGeo, innerMat);
+    scene.add(inner);
+
+    // interaction helpers: ray + pointer -> project to z=0 plane for pointer uniforms
     const ray = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    let isHover = false;
+    const pointer = new THREE.Vector2();
 
-    function onPointerMove(e) {
+    function pointerToPlane(clientX, clientY) {
       const rect = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-      ray.setFromCamera(mouse, camera);
-      isHover = ray.intersectObject(core).length > 0;
-      renderer.domElement.style.cursor = isHover ? "pointer" : "auto";
+      pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+      ray.setFromCamera(pointer, camera);
+      const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0.0); // z=0 plane
+      const hit = new THREE.Vector3();
+      const ok = ray.ray.intersectPlane(plane, hit);
+      return ok ? hit : null;
     }
 
-    function onPointerDown(e) {
-      if (isHover) setChatOpen(true);
+    // double-tap handling
+    let lastTap = 0;
+    function handlePointerDown(e) {
+      // compute hit point for shader control & click pulse
+      const hit = pointerToPlane(e.clientX, e.clientY);
+      if (hit) {
+        material.uniforms.uClick.value.set(hit.x, hit.y, performance.now() / 1000);
+      }
+      const now = performance.now();
+      if (now - lastTap < 350) {
+        // double-click / double-tap detected
+        setChatOpen(true);
+      }
+      lastTap = now;
     }
 
-    renderer.domElement.addEventListener("pointermove", onPointerMove);
-    renderer.domElement.addEventListener("pointerdown", onPointerDown);
+    function handlePointerMove(e) {
+      const hit = pointerToPlane(e.clientX, e.clientY);
+      if (hit) material.uniforms.uPointer.value.set(hit.x, hit.y);
+      else material.uniforms.uPointer.value.set(10, 10); // default: offscreen
+    }
 
-    // animație
+    // also listen for dblclick event for desktop reliability
+    function handleDblClick() {
+      setChatOpen(true);
+    }
+
+    renderer.domElement.addEventListener("pointerdown", handlePointerDown);
+    renderer.domElement.addEventListener("pointermove", handlePointerMove);
+    renderer.domElement.addEventListener("dblclick", handleDblClick);
+
+    // animation loop
     const clock = new THREE.Clock();
     let rafId = null;
     function animate() {
       rafId = requestAnimationFrame(animate);
       const t = clock.getElapsedTime();
+      material.uniforms.uTime.value = t;
 
-      shellMat.uniforms.uTime.value = t;
-      shellMat.uniforms.uScale.value = 1.0 + 0.08 * Math.sin(t * 1.6);
-      veilMat.uniforms.uTime.value = t;
+      // subtle rotations + breathing
+      points.rotation.y += 0.0009;
+      points.rotation.x += 0.0002;
+      const breathe = 1.0 + 0.015 * Math.sin(t * 1.5);
+      points.scale.set(breathe, breathe, breathe);
 
-      const pulse = 1.0 + 0.015 * Math.sin(t * 2.5);
-      core.scale.set(pulse, pulse, pulse);
-      rim.scale.set(pulse * 1.02, pulse * 1.02, pulse * 1.02);
-      glowMesh.scale.set(1.0 + 0.03 * Math.sin(t * 1.8), 1.0 + 0.03 * Math.sin(t * 1.8), 1.0 + 0.03 * Math.sin(t * 1.8));
+      inner.scale.set(1.0 + 0.01 * Math.sin(t * 2.5), 1.0 + 0.01 * Math.sin(t * 2.5), 1.0 + 0.01 * Math.sin(t * 2.5));
 
       controls.update();
       renderer.render(scene, camera);
     }
     animate();
 
-    // resize
+    // resize handling (keep true to update CSS size as well)
     function onResize() {
       const WW = mount.clientWidth;
       const HH = mount.clientHeight;
       camera.aspect = WW / HH;
       camera.updateProjectionMatrix();
-      renderer.setSize(WW, HH);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(WW, HH, true);
+      material.uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio || 1, 2);
     }
     window.addEventListener("resize", onResize);
 
     // cleanup
     return () => {
       cancelAnimationFrame(rafId);
-      renderer.domElement.removeEventListener("pointermove", onPointerMove);
-      renderer.domElement.removeEventListener("pointerdown", onPointerDown);
+      renderer.domElement.removeEventListener("pointerdown", handlePointerDown);
+      renderer.domElement.removeEventListener("pointermove", handlePointerMove);
+      renderer.domElement.removeEventListener("dblclick", handleDblClick);
       window.removeEventListener("resize", onResize);
-
-      // clear any reply timeouts
       replyTimeouts.current.forEach((id) => clearTimeout(id));
       replyTimeouts.current = [];
-
-      // dispose three objects
-      shellGeo.dispose();
-      shellMat.dispose();
-      veilGeo.dispose();
-      veilMat.dispose();
-      coreGeo && coreGeo.dispose && coreGeo.dispose();
-      coreMat && coreMat.dispose && coreMat.dispose();
-      rimGeo && rimGeo.dispose && rimGeo.dispose();
-      rimMat && rimMat.dispose && rimMat.dispose();
-      glowGeom && glowGeom.dispose && glowGeom.dispose();
-      glowMat && glowMat.dispose && glowMat.dispose();
-
-      if (renderer && renderer.domElement && mount.contains(renderer.domElement)) {
-        mount.removeChild(renderer.domElement);
-      }
+      try {
+        geo.dispose();
+        material.dispose();
+        innerGeo.dispose();
+        innerMat.dispose();
+      } catch (e) {}
+      if (renderer && renderer.domElement && mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
       renderer.dispose();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [height]);
 
-  // ========================
-  // Chat logic (front-end only, mock replies)
-  // ========================
-  const messagesEndRef = useRef(null);
-
-  useEffect(() => {
-    // autoscroll la fiecare mesaj nou
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
-  }, [messages, chatOpen]);
-
+  // send message (mock reply)
   const sendMessage = (text) => {
     if (!text || !text.trim()) return;
     const t = text.trim();
     setMessages((m) => [...m, { from: "you", text: t }]);
     setInput("");
-
-    // simulăm un răspuns AI (random delay 400-900ms)
-    const delay = 400 + Math.random() * 900;
     const id = setTimeout(() => {
-      // exemplu simplu: răspuns bazat pe text
-      const reply = generateMockReply(t);
-      setMessages((m) => [...m, { from: "gargantua", text: reply }]);
-    }, delay);
+      const replyVariants = [
+        "Interesant — spune-mi mai mult.",
+        "Hmmm... asta sună cool 😄",
+        "Pot să-ți arăt un exemplu vizual pentru asta.",
+        "Aha — deci vrei să explorăm mai adânc.",
+      ];
+      setMessages((m) => [...m, { from: "gargantua", text: replyVariants[Math.floor(Math.random() * replyVariants.length)] }]);
+    }, 500 + Math.random() * 800);
     replyTimeouts.current.push(id);
   };
 
-  // generăm un reply mock — în realitate chemi backendul aici
-  function generateMockReply(userText) {
-    // răspunsuri simple, adaptabile
-    const l = userText.toLowerCase();
-    if (l.includes("hi") || l.includes("salut") || l.includes("hello")) {
-      return "Salut! Cu ce te pot ajuta azi?";
-    }
-    if (l.includes("black") || l.includes("negru") || l.includes("gaură")) {
-      return "Misterios... gaura neagră îți zâmbește dincolo de orizont.";
-    }
-    if (l.includes("cum") || l.includes("ce") || l.includes("explică")) {
-      return "Pot explica fizica vizuală sau putem face o simulare — ce preferi?";
-    }
-    // default
-    const variants = [
-      "Interesant — spune-mi mai mult.",
-      "Hmmm... asta sună cool 😄",
-      "Pot să-ți arăt un exemplu vizual pentru asta.",
-      "Aha — deci vrei să explorăm mai adânc.",
-    ];
-    return variants[Math.floor(Math.random() * variants.length)];
-  }
-
-  // handler pentru Enter în input
   const onKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -355,9 +361,6 @@ export default function Mascot({ height = 450 }) {
     }
   };
 
-  // ========================
-  // UI render
-  // ========================
   return (
     <div style={{ width: "100%", boxSizing: "border-box", paddingLeft: "0.5rem", paddingRight: "0.5rem", position: "relative" }}>
       <div
@@ -374,14 +377,7 @@ export default function Mascot({ height = 450 }) {
       {/* Chat overlay */}
       {chatOpen && (
         <div style={overlayStyles.container}>
-          <button
-            style={overlayStyles.close}
-            onClick={() => setChatOpen(false)}
-            aria-label="Close chat"
-          >
-            ✕
-          </button>
-
+          <button style={overlayStyles.close} onClick={() => setChatOpen(false)} aria-label="Close chat">✕</button>
           <div style={overlayStyles.header}>Gargantua</div>
 
           <div style={overlayStyles.body}>
@@ -403,13 +399,7 @@ export default function Mascot({ height = 450 }) {
                 style={overlayStyles.textarea}
                 rows={2}
               />
-              <button
-                onClick={() => sendMessage(input)}
-                style={overlayStyles.sendBtn}
-                aria-label="Send message"
-              >
-                Send
-              </button>
+              <button onClick={() => sendMessage(input)} style={overlayStyles.sendBtn} aria-label="Send message">Send</button>
             </div>
           </div>
         </div>
@@ -418,7 +408,7 @@ export default function Mascot({ height = 450 }) {
   );
 }
 
-// overlay styles extinse
+// overlayStyles (same look as before, zIndex a bit higher to pop above hero)
 const overlayStyles = {
   container: {
     position: "absolute",
@@ -427,7 +417,7 @@ const overlayStyles = {
     transform: "translate(-50%,-50%)",
     width: 360,
     maxWidth: "92%",
-    zIndex: 1,
+    zIndex: 60,
     background: "linear-gradient(180deg, rgba(6,10,28,0.98), rgba(4,6,20,0.98))",
     borderRadius: 12,
     boxShadow: "0 20px 60px rgba(2,8,30,0.7)",
@@ -437,77 +427,15 @@ const overlayStyles = {
     paddingBottom: 12,
     display: "flex",
     flexDirection: "column",
-    fontFamily:'Inter',
+    fontFamily: "Inter, sans-serif",
   },
-  close: {
-    position: "absolute",
-    right: 8,
-    top: 8,
-    background: "transparent",
-    color: "#dfeeff",
-    border: "none",
-    fontSize: 18,
-    cursor: "pointer",
-  },
-  header: {
-    padding: "12px 16px",
-    borderBottom: "1px solid rgba(255,255,255,0.03)",
-    fontWeight: 700,
-    fontSize: 15,
-  },
-  body: {
-    padding: "10px 12px",
-    display: "flex",
-    flexDirection: "column",
-    gap: 8,
-  },
-  msgList: {
-    maxHeight: 260,
-    overflowY: "auto",
-    display: "flex",
-    flexDirection: "column",
-    gap: 8,
-    paddingRight: 6,
-  },
-  msgBot: {
-    alignSelf: "flex-start",
-    background: "linear-gradient(90deg, rgba(80,100,255,0.12), rgba(40,20,80,0.06))",
-    padding: 8,
-    borderRadius: 8,
-    maxWidth: "85%",
-    fontSize: 13,
-  },
-  msgYou: {
-    alignSelf: "flex-end",
-    background: "linear-gradient(90deg, rgba(80,240,200,0.08), rgba(20,40,80,0.03))",
-    padding: 8,
-    borderRadius: 8,
-    maxWidth: "85%",
-    fontSize: 13,
-  },
-  inputRow: {
-    display: "flex",
-    gap: 8,
-    alignItems: "center",
-  },
-  textarea: {
-    flex: 1,
-    resize: "none",
-    padding: "8px 10px",
-    borderRadius: 8,
-    border: "1px solid rgba(255,255,255,0.06)",
-    background: "rgba(10,14,30,0.6)",
-    color: "#dfeeff",
-    outline: "none",
-    fontSize: 14,
-  },
-  sendBtn: {
-    padding: "8px 12px",
-    background: "linear-gradient(90deg,#5c46ff,#2fefff)",
-    border: "none",
-    color: "#081022",
-    borderRadius: 8,
-    fontWeight: 700,
-    cursor: "pointer",
-  },
+  close: { position: "absolute", right: 8, top: 8, background: "transparent", color: "#dfeeff", border: "none", fontSize: 18, cursor: "pointer" },
+  header: { padding: "12px 16px", borderBottom: "1px solid rgba(255,255,255,0.03)", fontWeight: 700, fontSize: 15 },
+  body: { padding: "10px 12px", display: "flex", flexDirection: "column", gap: 8 },
+  msgList: { maxHeight: 260, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, paddingRight: 6 },
+  msgBot: { alignSelf: "flex-start", background: "linear-gradient(90deg, rgba(80,100,255,0.12), rgba(40,20,80,0.06))", padding: 8, borderRadius: 8, maxWidth: "85%", fontSize: 13 },
+  msgYou: { alignSelf: "flex-end", background: "linear-gradient(90deg, rgba(80,240,200,0.08), rgba(20,40,80,0.03))", padding: 8, borderRadius: 8, maxWidth: "85%", fontSize: 13 },
+  inputRow: { display: "flex", gap: 8, alignItems: "center" },
+  textarea: { flex: 1, resize: "none", padding: "8px 10px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)", background: "rgba(10,14,30,0.6)", color: "#dfeeff", outline: "none", fontSize: 14 },
+  sendBtn: { padding: "8px 12px", background: "linear-gradient(90deg,#5c46ff,#2fefff)", border: "none", color: "#081022", borderRadius: 8, fontWeight: 700, cursor: "pointer" },
 };
